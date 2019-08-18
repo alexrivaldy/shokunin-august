@@ -1,5 +1,8 @@
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -8,7 +11,10 @@ import static org.junit.Assert.*;
 
 public class PropertiesParserTest {
 
-    PropertiesParser subject = new PropertiesParser();
+    private PropertiesParser subject = new PropertiesParser();
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void parseNameShouldReturnBackName() {
@@ -21,20 +27,8 @@ public class PropertiesParserTest {
     }
 
     @Test
-    public void parseNameShouldReturnOnlyName() {
-        String name = "Alex !first";
-
-        Optional<String> actual = subject.parseName(name);
-
-        assertTrue(actual.isPresent());
-        assertThat(actual.get(), is("Alex"));
-    }
-
-    @Test
     public void parseNameShouldReturnEmptyWhenDataIsEmpty() {
-        String name = "";
-
-        Optional<String> actual = subject.parseName(name);
+        Optional<String> actual = subject.parseName("");
 
         assertFalse(actual.isPresent());
     }
@@ -42,11 +36,50 @@ public class PropertiesParserTest {
 
     @Test
     public void parseNameShouldReturnEmptyWhenDataIsNull() {
-        String name = null;
-
-        Optional<String> actual = subject.parseName(name);
+        Optional<String> actual = subject.parseName(null);
 
         assertFalse(actual.isPresent());
     }
+
+    @Test
+    public void parseNameShouldReturnBackDeveloperWithName() throws WrongFormatException {
+        String name = "Alex";
+
+        Developer developer = new Developer();
+        developer.setName(name);
+
+        Developer actual = subject.parse(name);
+
+        assertNotNull(actual);
+        assertThat(actual.getName(), is(name));
+    }
+
+    @Test
+    public void parseNameShouldThrowExceptionWhenNameHasUnknownSymbol() throws WrongFormatException {
+        expectedException.expect(WrongFormatException.class);
+
+        String name = "Alex,";
+
+        Developer developer = new Developer();
+        developer.setName(name);
+
+        subject.parse(name);
+
+    }
+
+    @Test
+    public void parseNameShouldThrowExceptionWhenDeveloperPropertiesIsNull() throws WrongFormatException {
+        expectedException.expect(WrongFormatException.class);
+
+        subject.parse(null);
+    }
+
+    @Test
+    public void parseNameShouldThrowExceptionWhenDeveloperPropertiesIsEmpty() throws WrongFormatException {
+        expectedException.expect(WrongFormatException.class);
+
+        subject.parse(" ");
+    }
+
 
 }
