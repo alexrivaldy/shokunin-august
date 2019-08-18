@@ -1,17 +1,19 @@
+import exception.WrongFormatException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.List;
 import java.util.Optional;
 
+import static developerProperties.DeveloperProperty.NOT_BEST;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
-public class PropertiesParserTest {
+public class LineParserTest {
 
-    private PropertiesParser subject = new PropertiesParser();
+    private LineParser subject = new LineParser();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -42,7 +44,7 @@ public class PropertiesParserTest {
     }
 
     @Test
-    public void parseNameShouldReturnBackDeveloperWithName() throws WrongFormatException {
+    public void parseShouldReturnBackDeveloperWithName() throws WrongFormatException {
         String name = "Alex";
 
         Developer developer = new Developer();
@@ -55,7 +57,7 @@ public class PropertiesParserTest {
     }
 
     @Test
-    public void parseNameShouldThrowExceptionWhenNameHasUnknownSymbol() throws WrongFormatException {
+    public void parseShouldThrowExceptionWhenNameHasUnknownSymbol() throws WrongFormatException {
         expectedException.expect(WrongFormatException.class);
 
         String name = "Alex,";
@@ -68,17 +70,29 @@ public class PropertiesParserTest {
     }
 
     @Test
-    public void parseNameShouldThrowExceptionWhenDeveloperPropertiesIsNull() throws WrongFormatException {
+    public void parseShouldThrowExceptionWhenDeveloperPropertiesIsNull() throws WrongFormatException {
         expectedException.expect(WrongFormatException.class);
 
         subject.parse(null);
     }
 
     @Test
-    public void parseNameShouldThrowExceptionWhenDeveloperPropertiesIsEmpty() throws WrongFormatException {
+    public void parseShouldThrowExceptionWhenDeveloperPropertiesIsEmpty() throws WrongFormatException {
         expectedException.expect(WrongFormatException.class);
 
         subject.parse(" ");
+    }
+
+    @Test
+    public void parseShouldReturnDeveloperPropertyNotBestWhenLineHasNotBestIndicator() throws WrongFormatException {
+        String developerProperties = "Alex is not the best developer.";
+
+        Developer actual = subject.parse(developerProperties);
+
+        assertNotNull(actual);
+        assertThat(actual.getProperties().size(), is(1));
+        assertThat(actual.getProperties().get(0), is(NOT_BEST));
+
     }
 
 

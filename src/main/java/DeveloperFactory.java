@@ -2,10 +2,10 @@ import java.util.Optional;
 
 public class DeveloperFactory {
 
-    PropertiesParser propertiesParser;
+    LineParser lineParser;
 
     public DeveloperFactory() {
-        propertiesParser = new PropertiesParser();
+        lineParser = new LineParser();
     }
 
     public Developer createDeveloper() {
@@ -15,7 +15,7 @@ public class DeveloperFactory {
     public Developer createDeveloper(String developerProperties) {
         Developer developer = new Developer();
 
-        Optional<String> name = propertiesParser.parseName(developerProperties);
+        Optional<String> name = lineParser.parseName(developerProperties);
 
         developer.setName(name.get());
         return developer;

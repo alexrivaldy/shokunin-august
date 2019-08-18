@@ -1,10 +1,14 @@
+import developerProperties.PropertiesParser;
+import exception.WrongFormatException;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PropertiesParser {
+public class LineParser {
 
     private final static String WHITE_SPACE_DELIMITER = " ";
+    private PropertiesParser propertiesParser =  new PropertiesParser();
 
     public Optional<String> parseName(String developerProperties) {
         try {
@@ -29,6 +33,7 @@ public class PropertiesParser {
             }
 
             developer.setName(name);
+            developer.setProperties(propertiesParser.parse(developerProperties));
 
         } catch (NullPointerException | NoSuchElementException e) {
             throw new WrongFormatException("ERROR! Line is not in the right format");
