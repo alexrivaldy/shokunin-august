@@ -2,27 +2,22 @@ package developerProperties;
 
 import exception.WrongFormatException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.util.Arrays.asList;
 
 public class PropertiesParser {
 
 
-    public List<DeveloperProperty> parse(String developerProperties) throws WrongFormatException {
+    public Map<DeveloperProperty, String> parse(String developerProperties) throws WrongFormatException {
 
-        List<DeveloperProperty> properties = new ArrayList<>();
+        Map<DeveloperProperty, String> properties = new HashMap<>();
 
         try {
-            asList(DeveloperProperty.values())
-                .forEach(developerProperty -> {
-                    if (hasProperty(developerProperties, developerProperty)) {
-                        properties.add(developerProperty);
-                    }
-                });
+            for (DeveloperProperty developerProperty : DeveloperProperty.values()) {
+                checkLine(properties, developerProperty, developerProperties);
+            }
         } catch (NullPointerException e) {
             throw new WrongFormatException("ERROR! Properties are not in the right format");
         }
@@ -31,12 +26,36 @@ public class PropertiesParser {
 
     }
 
+    private void checkLine(Map<DeveloperProperty, String> properties,
+                           DeveloperProperty developerProperty,
+                           String developerProperties) throws WrongFormatException {
+
+        if (hasProperty(developerProperties, developerProperty)) {
+            if (developerProperty.isCheckName()) {
+                properties.put(developerProperty, retrieveSecondNameFromLine(developerProperties));
+            } else {
+                properties.put(developerProperty, "");
+            }
+        }
+    }
+
     private boolean hasProperty(String developerProperties, DeveloperProperty property) {
-        String propertyPattern = property.getPattern();
-        Pattern namePattern = Pattern.compile(propertyPattern);
-        Matcher matcher = namePattern.matcher(developerProperties);
+        String propertyRegex = property.getPattern();
+        Pattern propertyPattern = Pattern.compile(propertyRegex);
+        Matcher matcher = propertyPattern.matcher(developerProperties);
 
         return matcher.matches();
+    }
+
+    private String retrieveSecondNameFromLine(String developerProperties) throws WrongFormatException {
+        String secondNameRegex = " [A-Z][a-z]*";
+        Pattern secondNamePattern = Pattern.compile(secondNameRegex);
+        Matcher matcher = secondNamePattern.matcher(developerProperties);
+
+        if (matcher.find()) {
+            return matcher.group().trim();
+        }
+        throw new WrongFormatException("ERROR! No other developer name!");
     }
 
 }

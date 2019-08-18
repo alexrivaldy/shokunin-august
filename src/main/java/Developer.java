@@ -1,12 +1,12 @@
 import developerProperties.DeveloperProperty;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Developer {
 
     private String name = "";
-    private List<DeveloperProperty> properties = new ArrayList<>();
+    private Map<DeveloperProperty, String> properties = new HashMap<>();
 
     public String getName() {
         return name;
@@ -15,11 +15,11 @@ public class Developer {
         this.name = name;
     }
 
-    public List<DeveloperProperty> getProperties() {
+    public Map<DeveloperProperty, String> getProperties() {
         return properties;
     }
 
-    public void setProperties(List<DeveloperProperty> developerProperties) {
+    public void setProperties(Map<DeveloperProperty, String> developerProperties) {
         this.properties = developerProperties;
     }
 }

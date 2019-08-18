@@ -91,7 +91,7 @@ public class LineParserTest {
 
         assertNotNull(actual);
         assertThat(actual.getProperties().size(), is(1));
-        assertThat(actual.getProperties().get(0), is(NOT_BEST));
+        assertTrue(actual.getProperties().containsKey(NOT_BEST));
 
     }
 
